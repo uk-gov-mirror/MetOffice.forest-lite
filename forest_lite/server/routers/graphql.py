@@ -6,9 +6,13 @@ import graphene
 
 class Query(graphene.ObjectType):
     hello = graphene.String(name=graphene.String(default_value="World!"))
+    colorbrewer = graphene.String()
 
-    def resolve_hello(self, info, name):
+    def resolve_hello(root, info, name):
         return "Hello, " + name + "!"
+
+    def resolve_colorbrewer(root, info):
+        return "Colorbrewer"
 
 
 router = APIRouter()
