@@ -18,19 +18,26 @@ class Palette(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
-    colorbrewer = Field(List(Palette), kind=Kind())
+    colorbrewer = Field(List(Palette), kind=Kind(), level=Int())
 
-    def resolve_colorbrewer(root, info, kind=None):
+    def resolve_colorbrewer(root, info, kind=None, level=None):
         # TODO: Parse colorbrewer.json into a list of Palette types
         palettes = [
-            Palette(name="Reds", kind=Kind.SEQUENTIAL, levels=[3, 5, 6]),
+            Palette(name="Blues", kind=Kind.SEQUENTIAL, levels=[3, 5, 6]),
+            Palette(name="Reds", kind=Kind.SEQUENTIAL, levels=[3, 4, 7]),
             Palette(name="Set3", kind=Kind.CATEGORICAL, levels=[3, 4, 5, 6, 7, 8])
         ]
-        if kind is None:
-            return palettes
-        else:
-            return [palette for palette in palettes
-                    if palette.kind == kind]
+
+        # Filter by palette kind
+        if kind is not None:
+            palettes = [palette for palette in palettes
+                        if palette.kind == kind]
+
+        # Filter by number of levels
+        if level is not None:
+            palettes = [palette for palette in palettes
+                        if level in palette.levels]
+        return palettes
 
 
 router = APIRouter()
